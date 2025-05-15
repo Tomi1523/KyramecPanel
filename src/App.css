@@ -1,0 +1,70 @@
+#root {
+  
+  margin: 0 auto;
+  padding: 2rem;
+  text-align: center;
+}
+
+body {
+  
+  font-family: "Montserrat", sans-serif;
+}
+
+
+/* Fondo gris claro por defecto */
+.form-control {
+  background-color: #f0f0f0;
+  transition: background-color 0.3s ease; /* Transición suave */
+  
+}
+
+/* Fondo blanco cuando el input está en foco */
+.form-control:focus {
+  background-color: #ffffff; /* Blanco */
+  border-color: #63A105; /* Color del borde en foco (opcional) */
+ box-shadow: none;
+}
+
+input[type="number"]:disabled {
+  cursor: not-allowed;
+  
+}
+
+input[type="number"]:enabled {
+  background-color: white;
+}
+
+
+.form-select {
+  box-shadow: none;
+}
+
+select.form-select:focus {
+  box-shadow: none;
+  border-color: #63A105; /* Opcional: quita el borde azul también */
+}
+
+.btn-primary {
+  background-color: rgb(70, 133, 2);;
+  border-color: rgb(70, 133, 2);;
+  color: white;
+  transition: background-color 0.3s ease; /* Transición suave */
+  
+
+}
+
+.btn-primary:hover {
+  background-color: #62ad00; 
+  border-color: #62ad00;
+  cursor: pointer; 
+}
+
+.btn-primary:disabled,
+.btn-primary[disabled] {
+  background-color: #5c5c5c; /* Color gris para el botón deshabilitado */
+  border-color: #cccccc;
+  cursor: not-allowed;
+}
+
+
+
