@@ -476,7 +476,7 @@ const AddTractorSembradora = ({ subcategoria, categoria }) => {
                 setPrecioIVA({ ...precioIVA, moneda: e.target.value })
               }
             >
-              <option value="">Selecciona una moneda</option>
+               <option value="">Selecciona una moneda</option>
               <option value="ARS">ARS</option>
               <option value="USD">USD</option>
             </select>

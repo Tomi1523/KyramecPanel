@@ -12,6 +12,7 @@ const AddImplementosAgricolas = ({ subcategoria, categoria }) => {
     const [showAlert, setShowAlert] = useState(false);
     const [extraFields, setExtraFields] = useState([""]);
     const [text, setText] = useState("");
+    const [precioIVA, setPrecioIVA] = useState({ moneda: "", valor: "" });
     const imageInputRef = useRef(null);
     const pdfInputRef = useRef(null);
 
@@ -44,12 +45,13 @@ const AddImplementosAgricolas = ({ subcategoria, categoria }) => {
                 categoria,
                 subcategoria,
                 extraFields,
-                text
+                text,
+                 precioIVA
             };
 
             await handleAddImplementos(implementoData); 
 
-          
+           setPrecioIVA({ moneda: "", valor: "" });
             setTitle("");
             setImageFiles([]);
             setPdfFile(null);
@@ -119,7 +121,31 @@ const AddImplementosAgricolas = ({ subcategoria, categoria }) => {
                         onChange={(e) => setText(e.target.value)}
                     />
                 </div>
-                <div className="mb-3">
+              <label className="form-label ">Precio con IVA</label>
+                  <div className="input-group">
+            <select
+              className="form-select"
+              value={precioIVA.moneda}
+              onChange={(e) =>
+                setPrecioIVA({ ...precioIVA, moneda: e.target.value })
+              }
+            >
+              <option value="">Selecciona una moneda</option>
+              <option value="ARS">ARS</option>
+              <option value="USD">USD</option>
+            </select>
+            <input
+              type="number"
+              className="form-control"
+              placeholder="Valor"
+              value={precioIVA.valor}
+              onChange={(e) =>
+                setPrecioIVA({ ...precioIVA, valor: e.target.value })
+              }
+            />
+          </div>
+
+                <div className="mb-3 mt-2">
                     <label className="form-label">Campos adicionales</label>
                     {extraFields.map((field, index) => (
                         <input

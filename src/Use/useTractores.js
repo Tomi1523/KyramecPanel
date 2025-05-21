@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { addTractor, getTractores, deleteTractor, getTractorById, updateTractor } from '../firestoreService';
+import { addTractor, getTractores, deleteTractor, updateTractor, fetchTractorById } from '../firestoreService';
 
 export const useTractores = () => {
   const [tractores, setTractores] = useState([]);
@@ -51,5 +51,17 @@ export const useTractores = () => {
     }
   };
 
-  return { tractores, loading, error, handleAddTractor, handleDeleteTractor, handleUpdateTractor, getTractorById };
+  const getTractorById = async (id) => {
+    return await fetchTractorById(id);
+  };
+
+  return {
+    tractores,
+    loading,
+    error,
+    handleAddTractor,
+    handleDeleteTractor,
+    handleUpdateTractor,
+    getTractorById 
+  };
 };

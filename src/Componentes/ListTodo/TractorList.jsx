@@ -1,5 +1,6 @@
 import React from 'react';
 import { useTractores } from '../../Use/useTractores';
+import { Link } from 'react-router-dom';
 
 const TractorList = () => {
   const { tractores, loading, error, handleDeleteTractor } = useTractores();
@@ -49,7 +50,8 @@ const TractorList = () => {
                   <li className="list-group-item"><strong>Línea:</strong> {tractor.linea}</li>
                   <li className="list-group-item"><strong>Potencia:</strong> {tractor.potencia}</li>
                   <li className="list-group-item"><strong>Tracción:</strong> {tractor.traccion}</li>
-                  <li className="list-group-item"><strong>Tracción:</strong> {tractor.seccion}</li>
+                  
+                 <li className="list-group-item"><strong>Precio:</strong> {tractor.precioIVA.moneda} ${tractor.precioIVA.valor} </li>
                   <li className="list-group-item"><strong>Dirección:</strong> {tractor.direccion}</li>
                   <li className="list-group-item"><strong>Tipo de motor:</strong> {tractor.tipoMotor}</li>
                   <li className="list-group-item"><strong>Levante a 3 puntos:</strong> {tractor.levanteTresPuntos}</li>
@@ -88,15 +90,19 @@ const TractorList = () => {
                       {tractor.condicionesFinanciacion?.aConvenir && (
                         <li>A convenir</li>
                       )}
+                      {tractor.precioIVA.valor.aConvenir && (
+                        <li>A convenir</li>
+                      )}
+                   
                     </ul>
                   </li>
                 </ul>
                 <a href={tractor.pdfUrl} className="btn btn-primary mt-3" target="_blank" rel="noopener noreferrer">Ver PDF</a>
 
               </div>
-              <div>
+              <div className='gap-2 d-flex justify-content-center'>
                 <button
-                  className="btn btn-danger mt-2"
+                  className="btn btn-danger "
                   onClick={() => {
                     const confirmar = window.confirm("¿Estás seguro que deseas eliminar este tractor?");
                     if (confirmar) {
@@ -106,6 +112,10 @@ const TractorList = () => {
                 >
                   Eliminar
                 </button>
+
+                <Link to={`/opciones/tractor/${tractor.id}`} className="btn btn-warning">
+                  Editar
+                </Link>
               </div>
             </div>
           </div>

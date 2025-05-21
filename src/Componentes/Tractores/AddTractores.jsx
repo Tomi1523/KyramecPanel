@@ -102,7 +102,7 @@ const AddTractores = ({ subcategoria, categoria }) => {
 
       await handleAddTractor(tractorData);
 
-      // Resetear los campos del formulario
+    
       setTitle("");
       setText("");
       
@@ -326,7 +326,7 @@ const AddTractores = ({ subcategoria, categoria }) => {
             <option value="B">30 a 70 hp</option>
             <option value="C">45 a 90 hp</option>
             <option value="D">100 a 140 hp</option>
-            <option value="E">160 a 220 hp</option>
+            <option value="E">160 a 260 hp</option>
           </select>
         </div>
         <div className="mb-3">
@@ -463,7 +463,7 @@ const AddTractores = ({ subcategoria, categoria }) => {
                 setPrecioIVA({ ...precioIVA, moneda: e.target.value })
               }
             >
-              <option value="">Selecciona una moneda</option>
+             <option value="">Selecciona una moneda</option>
               <option value="ARS">ARS</option>
               <option value="USD">USD</option>
             </select>
@@ -477,7 +477,9 @@ const AddTractores = ({ subcategoria, categoria }) => {
               }
             />
           </div>
-          <div className="mb-3">
+         
+        </div>
+ <div className="mb-3">
             <label className="form-label">Descripción</label>
             <textarea
               className="form-control"
@@ -487,8 +489,6 @@ const AddTractores = ({ subcategoria, categoria }) => {
               
             />
           </div>
-        </div>
-
         <div className="p-4 border rounded bg-light">
           <label className="form-label mb-3 fs-5">
             Condiciones y Financiación

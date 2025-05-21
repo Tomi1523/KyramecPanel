@@ -1,5 +1,6 @@
 import React from 'react';
 import { useRepuestos } from '../../Use/UseRepuestos';
+import { Link } from 'react-router-dom';
 
 
 const RepuestosList = () => {
@@ -22,7 +23,7 @@ const RepuestosList = () => {
     );
   }
 
-  // Filter repuestos to only include those with the category "repuestos"
+
   const filteredRepuestos = repuestos.filter(repuesto => repuesto.categoria === "repuestos");
 
   return (
@@ -48,9 +49,9 @@ const RepuestosList = () => {
                 </ul>
                 <a href={repuesto.pdfUrl} className="btn btn-primary mt-3" target="_blank" rel="noopener noreferrer">Ver PDF</a>
               </div>
-              <div>
+             <div className='gap-2 d-flex justify-content-center'>
                 <button
-                  className="btn btn-danger mt-2"
+                  className="btn btn-danger "
                   onClick={() => {
                     const confirmar = window.confirm("¿Estás seguro que deseas eliminar este repuesto?");
                     if (confirmar) {
@@ -60,6 +61,12 @@ const RepuestosList = () => {
                 >
                   Eliminar
                 </button>
+              
+                    <Link to={`/opciones/repuestos/${repuesto.id}`} className="btn btn-warning">
+                  Editar
+                </Link>
+
+                
               </div>
             </div>
           </div>

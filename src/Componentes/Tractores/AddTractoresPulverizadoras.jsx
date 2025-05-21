@@ -164,8 +164,7 @@ const AddTractoresPulverizadoras = ({ subcategoria, categoria }) => {
   return (
     <div className="container py-4">
       <h2 className="mb-4">Agregar Pulverizadora</h2>
-      <p>{categoria}</p>
-      <p>{subcategoria}</p>
+   
       <form onSubmit={handleSubmit} className="mb-5">
         <div className="mb-3 d-flex">
           <label className="form-label mb-0">Finalidad</label>
@@ -438,7 +437,7 @@ const AddTractoresPulverizadoras = ({ subcategoria, categoria }) => {
                 setPrecioIVA({ ...precioIVA, moneda: e.target.value })
               }
             >
-              <option value="">Selecciona una moneda</option>
+             <option value="">Selecciona una moneda</option>
               <option value="ARS">ARS</option>
               <option value="USD">USD</option>
             </select>

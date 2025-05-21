@@ -11,6 +11,9 @@ import RepuestosList from './Componentes/ListTodo/RepuestosList';
 import TecnologiaList from './Componentes/ListTodo/TecnologiaList';
 import ImplementosAgricolasList from './Componentes/ListTodo/ImplementosAgricolasList';
 import ImplementosVialesList from './Componentes/ListTodo/ImplementosVialesList';
+import EditRepuesto from './Componentes/Edit/EditRepuesto';
+import EditTractor from './Componentes/Edit/EditTractor';
+import EditMaquinariaVial from './Componentes/Edit/EditMaquinariaVial';
 
 function App() {
   const [user, setUser] = useState(null);
@@ -25,22 +28,25 @@ function App() {
     return () => unsubscribe();
   }, []);
 
-  
+
 
   return (
     <Router>
       <Routes>
         <Route path="/login" element={<Login />} />
 
-       
+
         <Route path="/" element={user ? <ItemSelector /> : <Navigate to="/login" />} />
         <Route path="/opciones" element={user ? <Opciones /> : <Navigate to="/login" />} />
         <Route path="/opciones/tractores" element={user ? <TractorList /> : <Navigate to="/login" />} />
         <Route path="/opciones/maquinariavial" element={user ? <MaquinaraVialTractoresList /> : <Navigate to="/login" />} />
         <Route path="/opciones/repuestos" element={user ? <RepuestosList /> : <Navigate to="/login" />} />
-        <Route path="/opciones/tecnologias" element={user ? <TecnologiaList /> : <Navigate to="/login" />} /> 
-         <Route path="/opciones/implementos-agricolas" element={user ? <ImplementosAgricolasList /> : <Navigate to="/login" />} />
-         <Route path="/opciones/implementos-viales" element={user ? <ImplementosVialesList /> : <Navigate to="/login" />} />
+        <Route path="/opciones/tecnologias" element={user ? <TecnologiaList /> : <Navigate to="/login" />} />
+        <Route path="/opciones/implementos-agricolas" element={user ? <ImplementosAgricolasList /> : <Navigate to="/login" />} />
+        <Route path="/opciones/implementos-viales" element={user ? <ImplementosVialesList /> : <Navigate to="/login" />} />
+        <Route path="/opciones/repuestos/:id" element={user ? <EditRepuesto /> : <Navigate to="/login" />} />
+        <Route path="/opciones/tractor/:id" element={user ? <EditTractor /> : <Navigate to="/login" />} />
+        <Route path="/opciones/maquinariavial/:id" element={user ? <EditMaquinariaVial /> : <Navigate to="/login" />} />
       </Routes>
     </Router>
   );

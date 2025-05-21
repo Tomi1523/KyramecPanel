@@ -24,13 +24,15 @@ export const getTractores = async () => {
 };
 
 
-export const getTractorById = async (tractorId) => {
+export const fetchTractorById = async (id) => {
   try {
-    const tractorDoc = await getDoc(doc(db, 'tractores', tractorId));
-    if (tractorDoc.exists()) {
-      return { id: tractorDoc.id, ...tractorDoc.data() };
+    const docRef = doc(db, 'tractores', id);
+    const docSnap = await getDoc(docRef);
+
+    if (docSnap.exists()) {
+      return { id: docSnap.id, ...docSnap.data() };
     } else {
-      console.log("No se encontró el tractor con ID:", tractorId);
+      console.warn("No se encontró el tractor con ese ID.");
       return null;
     }
   } catch (error) {
@@ -78,6 +80,28 @@ export const deleteRepuesto = async (repuestoId) => {
   const repuestoDoc = doc(db, 'repuestos', repuestoId);
   await deleteDoc(repuestoDoc);
 };
+
+export const editRepuesto = async (repuestoId, updatedData) => {
+  const repuestoDoc = doc(db, 'repuestos', repuestoId);
+  await updateDoc(repuestoDoc, updatedData);
+};
+
+export const fetchRepuestoById  = async (repuestoId) => {
+  try {
+    const repuestoDoc = doc(db, 'repuestos', repuestoId);
+    const repuestoSnap = await getDoc(repuestoDoc);
+    if (repuestoSnap.exists()) {
+      return { id: repuestoSnap.id, ...repuestoSnap.data() };
+    } else {
+      console.warn("Repuesto no encontrado en Firestore");
+      return null;
+    }
+  } catch (error) {
+    console.error("Error al obtener el repuesto:", error);
+    throw error;
+  }
+};
+
 
 //Implementos
 

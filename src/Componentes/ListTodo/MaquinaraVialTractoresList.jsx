@@ -1,5 +1,6 @@
 import React from 'react';
 import { useTractores } from '../../Use/useTractores';
+import { Link } from 'react-router-dom';
 
 const MaquinaraVialTractoresList = () => {
   const { tractores, loading, error, handleDeleteTractor } = useTractores();
@@ -21,7 +22,6 @@ const MaquinaraVialTractoresList = () => {
     );
   }
 
-  
   const filteredMaquinariaVial = tractores.filter(tractor => tractor.categoria === "maquinaria-viales");
 
   return (
@@ -39,7 +39,13 @@ const MaquinaraVialTractoresList = () => {
               />
               <div className="card-body">
                 <h5 className="card-title">{maquinaria.title}</h5>
+                <hr />
                 <p className="card-text">{maquinaria.text}</p>
+                <hr />
+                <p className="card-text">
+                  {maquinaria.precioIVA.valor} {maquinaria.precioIVA.moneda}
+                </p>
+                <hr />
                 <ul className="list-group list-group-flush">
                   {maquinaria.extraFields.map((field, index) => (
                     <li key={index} className="list-group-item">{field}</li>
@@ -47,9 +53,9 @@ const MaquinaraVialTractoresList = () => {
                 </ul>
                 <a href={maquinaria.pdfUrl} className="btn btn-primary mt-3" target="_blank" rel="noopener noreferrer">Ver PDF</a>
               </div>
-              <div>
+              <div className='gap-2 d-flex justify-content-center'>
                 <button
-                  className="btn btn-danger mt-2"
+                  className="btn btn-danger"
                   onClick={() => {
                     const confirmar = window.confirm("¿Estás seguro que deseas eliminar este producto?");
                     if (confirmar) {
@@ -59,6 +65,9 @@ const MaquinaraVialTractoresList = () => {
                 >
                   Eliminar
                 </button>
+                <Link to={`/opciones/maquinariavial/${maquinaria.id}`} className="btn btn-warning">
+                  Editar
+                </Link>
               </div>
             </div>
           </div>
