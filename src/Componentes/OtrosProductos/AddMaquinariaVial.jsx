@@ -8,6 +8,7 @@ const AddMaquinariaVial = ({ subcategoria, categoria }) => {
   const [submitting, setSubmitting] = useState(false);
   const [title, setTitle] = useState("");
   const [imageFiles, setImageFiles] = useState([]);
+  const [condicion, setCondicion] = useState("");
   const [pdfFile, setPdfFile] = useState(null);
   const [showAlert, setShowAlert] = useState(false);
   const [extraFields, setExtraFields] = useState([""]);
@@ -47,6 +48,7 @@ const AddMaquinariaVial = ({ subcategoria, categoria }) => {
         extraFields,
         text,
         precioIVA,
+        condicion,
       };
 
       await handleAddTractor(tractorData);
@@ -58,7 +60,7 @@ const AddMaquinariaVial = ({ subcategoria, categoria }) => {
       setImageFiles([]);
       setPdfFile(null);
       setText("");
-     
+     setCondicion("");
       if (imageInputRef.current) {
         imageInputRef.current.value = "";
       }
@@ -103,6 +105,31 @@ const AddMaquinariaVial = ({ subcategoria, categoria }) => {
 
     
       <form onSubmit={handleSubmit} className="mb-5">
+
+   <div className="mb-3 d-flex">
+          <label className="form-label mb-0">Condición</label>
+          <div className="d-flex gap-3 mx-4">
+            <label className="d-flex gap-1">
+              <input
+                type="radio"
+                name="Nuevo"
+                checked={condicion === "Nuevo"}
+                onChange={(e) => setCondicion(e.target.name)}
+              />
+              <span>Nuevo</span>
+            </label>
+            <label className="d-flex gap-1">
+              <input
+                type="radio"
+                name="Usado"
+                checked={condicion === "Usado"}
+                onChange={(e) => setCondicion(e.target.name)}
+              />
+              <span>Usado</span>
+            </label>
+          </div>
+        </div>
+
         <div className="mb-3">
           <label className="form-label">Título</label>
           <input

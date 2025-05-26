@@ -13,10 +13,11 @@ const EditMaquinariaVial = () => {
     text: '',
     imageUrls: [],
     pdfUrl: '',
+     condicion: '',
     extraFields: [''],
     precioIVA: { moneda: "", valor: "" }
   });
-
+  const [maquinariavial, setMaquinariavial] = useState(null);
   const [imageFiles, setImageFiles] = useState([]);
   const [pdfFile, setPdfFile] = useState(null);
   const [submitting, setSubmitting] = useState(false);
@@ -25,7 +26,7 @@ const EditMaquinariaVial = () => {
   const imageInputRef = useRef(null);
   const pdfInputRef = useRef(null);
 
-  useEffect(() => {
+useEffect(() => {
     const fetchTractor = async () => {
       const data = await getTractorById(id);
       if (data) {
@@ -34,9 +35,11 @@ const EditMaquinariaVial = () => {
           text: data.text || '',
           imageUrls: data.imageUrls || [],
           pdfUrl: data.pdfUrl || '',
+          condicion: data.condicion || '',
           extraFields: data.extraFields || [''],
           precioIVA: data.precioIVA || { moneda: "", valor: "" }
         });
+        setMaquinariavial(data); 
       }
     };
 
@@ -108,10 +111,46 @@ const EditMaquinariaVial = () => {
     }
   };
 
+  if (!maquinariavial) {
+    return (
+      <div className="d-flex justify-content-center align-items-center" style={{ height: '100vh' }}>
+        <div className="spinner-border text-success" role="status"></div>
+      </div>
+    );
+  }
+
+
   return (
     <div className="container py-4">
       <h2 className="mb-4">Editar Maquinaria Vial</h2>
       <form onSubmit={handleSubmit} className="mb-5">
+
+  <div className="mb-3 d-flex">
+          <label className="form-label mb-0">Condición</label>
+          <div className="d-flex gap-3 mx-4">
+            <label className="d-flex gap-1">
+              <input
+                type="radio"
+                name="condicion"
+                value="Nuevo"
+                checked={formData.condicion === "Nuevo"}
+                onChange={handleChange}
+              />
+              <span>Nuevo</span>
+            </label>
+            <label className="d-flex gap-1">
+              <input
+                type="radio"
+                name="condicion"
+                value="Usado"
+                checked={formData.condicion === "Usado"}
+                onChange={handleChange}
+              />
+              <span>Usado</span>
+            </label>
+          </div>
+        </div>
+
         <div className="mb-3">
           <label className="form-label">Título</label>
           <input

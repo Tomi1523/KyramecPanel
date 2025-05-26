@@ -122,3 +122,26 @@ export const deleteImplementos = async (implementosId) => {
   const implementosDoc = doc(db, 'implementos', implementosId);
   await deleteDoc(implementosDoc);
 };
+
+
+export const editImplemento = async (implementoId, updatedData) => {
+  const implementoDoc = doc(db, 'implementos', implementoId);
+  await updateDoc(implementoDoc, updatedData);
+};
+
+
+export const fetchImplementoById = async (implementoId) => {
+  try {
+    const implementoDoc = doc(db, 'implementos', implementoId);
+    const implementoSnap = await getDoc(implementoDoc);
+    if (implementoSnap.exists()) {
+      return { id: implementoSnap.id, ...implementoSnap.data() };
+    } else {
+      console.warn("Implemento no encontrado en Firestore");
+      return null;
+    }
+  } catch (error) {
+    console.error("Error al obtener el implemento:", error);
+    throw error;
+  }
+};

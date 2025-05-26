@@ -1,8 +1,8 @@
 import React from 'react';
-import { useTractores } from '../../Use/useTractores';
+import { useTractores } from '../../../Use/useTractores';
 import { Link } from 'react-router-dom';
 
-const TractorList = () => {
+const SembradoraList = () => {
   const { tractores, loading, error, handleDeleteTractor } = useTractores();
 
   if (loading) {
@@ -22,18 +22,19 @@ const TractorList = () => {
     );
   }
 
- 
-  const filteredTractores = tractores.filter(tractor => tractor.categoria === "maquinaria-agricola");
+  const filteredSembradoras = tractores.filter(
+    tractor => tractor.categoria === "maquinaria-agricola" && tractor.subcategoria === "sembradoras"
+  );
 
   return (
     <div className="container py-4">
-      <h2 className="mb-4">Tractores</h2>
+      <h2 className="mb-4">Sembradoras</h2>
       <div className="row">
-        {filteredTractores.map((tractor) => (
+        {filteredSembradoras.map((tractor) => (
           <div key={tractor.id} className="col-md-4 mb-4">
             <div className="card">
               <img
-                src={tractor.imageUrls}
+                src={tractor.imageUrls[0]}
                 className="card-img-top"
                 alt={tractor.title}
                 loading="lazy"
@@ -46,21 +47,21 @@ const TractorList = () => {
                   <li className="list-group-item"><strong>Condición:</strong> {tractor.condicion}</li>
                   <li className="list-group-item"><strong>Marca:</strong> {tractor.marca}</li>
                   <li className="list-group-item"><strong>Modelo:</strong> {tractor.modelo}</li>
+                  <li className="list-group-item"><strong>Cultivo/Uso:</strong> {tractor.cultivoUso}</li>
+                  <li className="list-group-item"><strong>Distancia entre surcos:</strong> {tractor.distanciaSurcos}</li>
+                  <li className="list-group-item"><strong>Ancho de trabajo:</strong> {tractor.anchoTrabajo}</li>
+                  <li className="list-group-item"><strong>Cantidad de tolvas:</strong> {tractor.cantidadTolvas}</li>
+                  <li className="list-group-item"><strong>Características del chasis:</strong> {tractor.caracteristicasChasis}</li>
+                  <li className="list-group-item"><strong>Sistema de labranza:</strong> {tractor.sistemaLabranza}</li>
+                  <li className="list-group-item"><strong>Sistema de siembra:</strong> {tractor.sistemaSiembra}</li>
+                  <li className="list-group-item"><strong>Cantidad de surcos:</strong> {tractor.cantidadSurcos}</li>
                   <li className="list-group-item"><strong>Año de fabricación:</strong> {tractor.anoFabricacion}</li>
-                  <li className="list-group-item"><strong>Línea:</strong> {tractor.linea}</li>
-                  <li className="list-group-item"><strong>Potencia:</strong> {tractor.potencia}</li>
-                  <li className="list-group-item"><strong>Tracción:</strong> {tractor.traccion}</li>
-                  
-                 <li className="list-group-item"><strong>Precio:</strong> {tractor.precioIVA.moneda} ${tractor.precioIVA.valor} </li>
-                  <li className="list-group-item"><strong>Dirección:</strong> {tractor.direccion}</li>
-                  <li className="list-group-item"><strong>Tipo de motor:</strong> {tractor.tipoMotor}</li>
-                  <li className="list-group-item"><strong>Levante a 3 puntos:</strong> {tractor.levanteTresPuntos}</li>
-                  <li className="list-group-item"><strong>Cabina:</strong> {tractor.cabina}</li>
-                  <li className="list-group-item"><strong>Variante de tracción:</strong> {tractor.varianteTraccion}</li>
-                  <li className="list-group-item"><strong>Tipo de rodado:</strong> {tractor.tipoRodado}</li>
                   <li className="list-group-item"><strong>Concesionario:</strong> {tractor.concesionario}</li>
                   <li className="list-group-item"><strong>Localidad:</strong> {tractor.localidad}</li>
-                  <li className="list-group-item"><strong>Entrega:</strong> {tractor.entrega}</li>
+                  <li className="list-group-item"><strong>Cuota sin interés:</strong> {tractor.cuotaSinInteres}</li>
+                  <li className="list-group-item"><strong>Costo de envío:</strong> {tractor.costoEnvio}</li>
+                  <li className="list-group-item"><strong>Promociones de pago:</strong> {tractor.promocionesPago}</li>
+                  <li className="list-group-item"><strong>Precio con IVA:</strong> {tractor.precioIVA.moneda} {tractor.precioIVA.valor}</li>
                   <li className="list-group-item"><strong>Condiciones y Financiación:</strong>
                     <ul>
                       {tractor.condicionesFinanciacion?.entregaFinanciacion?.checked && (
@@ -90,19 +91,15 @@ const TractorList = () => {
                       {tractor.condicionesFinanciacion?.aConvenir && (
                         <li>A convenir</li>
                       )}
-                      {tractor.precioIVA.valor.aConvenir && (
-                        <li>A convenir</li>
-                      )}
-                   
                     </ul>
                   </li>
+                  <li className="list-group-item"><strong>Entrega:</strong> {tractor.entrega}</li>
                 </ul>
                 <a href={tractor.pdfUrl} className="btn btn-primary mt-3" target="_blank" rel="noopener noreferrer">Ver PDF</a>
-
               </div>
               <div className='gap-2 d-flex justify-content-center'>
                 <button
-                  className="btn btn-danger "
+                  className="btn btn-danger"
                   onClick={() => {
                     const confirmar = window.confirm("¿Estás seguro que deseas eliminar este tractor?");
                     if (confirmar) {
@@ -112,10 +109,9 @@ const TractorList = () => {
                 >
                   Eliminar
                 </button>
-
-                <Link to={`/opciones/tractor/${tractor.id}`} className="btn btn-warning">
-                  Editar
-                </Link>
+                <Link to={`/opciones/maquinarias-agricolas/sembradora/${tractor.id}`} className="btn btn-warning">
+                                  Editar
+                                </Link>
               </div>
             </div>
           </div>
@@ -125,4 +121,4 @@ const TractorList = () => {
   );
 };
 
-export default TractorList;
+export default SembradoraList;

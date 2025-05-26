@@ -5,7 +5,7 @@ import AddRepuestos from "./OtrosProductos/AddRepuestos";
 import AddTractorSembradora from "./Tractores/AddTractorSembradora";
 import AddTractoresPulverizadoras from "./Tractores/AddTractoresPulverizadoras";
 import AddTractoresTolvas from "./Tractores/AddTractoresTolvas";
-import AddTractoresUsado from "./Tractores/AddTractoresUsado";
+
 
 import AddMaquinariaVial from "./OtrosProductos/AddMaquinariaVial";
 import AddTecnologiaParaElAgro from "./OtrosProductos/AddTecnologiaParaElAgro";
@@ -37,7 +37,7 @@ const ItemSelector = () => {
       "Sembradoras",
       "Pulverizadoras",
       "Tolvas",
-      "Usado",
+    
     ],
     "maquinaria-viales": [
       "Autoelevares",
@@ -124,8 +124,7 @@ const ItemSelector = () => {
           return <AddTractoresPulverizadoras categoria={selectedOption} subcategoria={selectedOptionSub} />;
         case "tolvas":
           return <AddTractoresTolvas categoria={selectedOption} subcategoria={selectedOptionSub} />;
-          case "usado":
-          return <AddTractoresUsado categoria={selectedOption} subcategoria={selectedOptionSub} />;
+          
         default:
           return null;
       }

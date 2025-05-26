@@ -1,67 +1,159 @@
-import React, { useState, useRef } from "react";
+import React, { useEffect, useState, useRef } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
 
-import { storage } from "../../services/firebase";
-import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
-import { useTractores } from "../../Use/useTractores";
+import { storage } from "../../../services/firebase";
+import { ref, uploadBytes, getDownloadURL, deleteObject } from "firebase/storage";
+import { useTractores } from '../../../Use/useTractores';
 
-const AddTractoresUsado = ({ subcategoria, categoria }) => {
-  const { handleAddTractor } = useTractores();
+const EditTractor = () => {
+  const { id } = useParams();
+  const navigate = useNavigate();
+  const { getTractorById, handleUpdateTractor } = useTractores();
+
+  const [tractor, setTractor] = useState(null);
+  const [imageFiles, setImageFiles] = useState([]);
+  const [pdfFile, setPdfFile] = useState(null);
+  const [submitting, setSubmitting] = useState(false);
+  const [showAlert, setShowAlert] = useState(false);
+
+  const [formData, setFormData] = useState({
+    title: '',
+    text: '',
+    currentImages: [],
+    finalidad: '',
+    condicion: '',
+    marca: '',
+    modelo: '',
+    anoFabricacion: '',
+    linea: '',
+    potencia: '',
+    traccion: '',
+    seccion: '',
+    direccion: '',
+    tipoMotor: '',
+    levanteTresPuntos: '',
+    cabina: '',
+    varianteTraccion: '',
+    tipoRodado: '',
+    concesionario: '',
+    localidad: '',
+    precioIVA: { moneda: '', valor: '' },
+    condicionesFinanciacion: {
+      entregaFinanciacion: { checked: false, valor: '' },
+      cuotas: { checked: false, valor: '' },
+      financiacionFabrica: false,
+      financiado: { checked: false, valor: '' },
+      cheques: { checked: false, valor: '' },
+      aceptaCanje: false,
+      tasaDolares: { checked: false, valor: '' },
+      tasaPesos: { checked: false, valor: '' },
+      aConvenir: false,
+    },
+    entrega: '',
+  });
 
   const imageInputRef = useRef(null);
   const pdfInputRef = useRef(null);
-  const [showAlert, setShowAlert] = useState(false);
-  const [title, setTitle] = useState("");
-  const [text, setText] = useState("");
-  const [imageFiles, setImageFiles] = useState([]);
-  const [pdfFile, setPdfFile] = useState(null);
-  const [finalidad, setFinalidad] = useState("");
-  const [condicion, setCondicion] = useState("");
-  const [marca, setMarca] = useState("");
-  const [modelo, setModelo] = useState("");
-  const [anoFabricacion, setAnoFabricacion] = useState("");
-  const [linea, setLinea] = useState("");
-  const [potencia, setPotencia] = useState("");
-  const [traccion, setTraccion] = useState("");
-  const [direccion, setDireccion] = useState("");
-  const [tipoMotor, setTipoMotor] = useState("");
-  const [levanteTresPuntos, setLevanteTresPuntos] = useState("");
-  const [seccion, setSeccion] = useState("");
-  const [cabina, setCabina] = useState("");
-  const [varianteTraccion, setVarianteTraccion] = useState("");
-  const [tipoRodado, setTipoRodado] = useState("");
-  const [concesionario, setConcesionario] = useState("");
-  const [localidad, setLocalidad] = useState("");
-  const [precioIVA, setPrecioIVA] = useState({ moneda: "", valor: "" });
-  const [condicionesFinanciacion, setCondicionesFinanciacion] = useState({
-    entregaFinanciacion: { checked: false, valor: "" },
-    cuotas: { checked: false, valor: "" },
-    financiacionFabrica: false,
-    financiado: { checked: false, valor: "" },
-    cheques: { checked: false, valor: "" },
-    aceptaCanje: false,
-    tasaDolares: { checked: false, valor: "" },
-    tasaPesos: { checked: false, valor: "" },
-    aConvenir: false,
-  });
-  const [entrega, setEntrega] = useState("");
-  const [submitting, setSubmitting] = useState(false);
+
+  useEffect(() => {
+    const fetchTractor = async () => {
+      const data = await getTractorById(id);
+      if (data) {
+        setTractor(data);
+        setFormData({
+          title: data.title || '',
+          text: data.text || '',
+          currentImages: data.imageUrls || [],
+          finalidad: data.finalidad || '',
+          condicion: data.condicion || '',
+          marca: data.marca || '',
+          modelo: data.modelo || '',
+          anoFabricacion: data.anoFabricacion || '',
+          linea: data.linea || '',
+          potencia: data.potencia || '',
+          traccion: data.traccion || '',
+          seccion: data.seccion || '',
+          direccion: data.direccion || '',
+          tipoMotor: data.tipoMotor || '',
+          levanteTresPuntos: data.levanteTresPuntos || '',
+          cabina: data.cabina || '',
+          varianteTraccion: data.varianteTraccion || '',
+          tipoRodado: data.tipoRodado || '',
+          concesionario: data.concesionario || '',
+          localidad: data.localidad || '',
+          precioIVA: data.precioIVA || { moneda: '', valor: '' },
+          condicionesFinanciacion: data.condicionesFinanciacion || {
+            entregaFinanciacion: { checked: false, valor: '' },
+            cuotas: { checked: false, valor: '' },
+            financiacionFabrica: false,
+            financiado: { checked: false, valor: '' },
+            cheques: { checked: false, valor: '' },
+            aceptaCanje: false,
+            tasaDolares: { checked: false, valor: '' },
+            tasaPesos: { checked: false, valor: '' },
+            aConvenir: false,
+          },
+          entrega: data.entrega || '',
+        });
+      }
+    };
+
+    fetchTractor();
+  }, [id]);
+
+  const handleDeleteImage = async (imageUrl) => {
+    try {
+      const imageRef = ref(storage, imageUrl);
+      await deleteObject(imageRef);
+      setFormData((prev) => ({
+        ...prev,
+        currentImages: prev.currentImages.filter(url => url !== imageUrl),
+      }));
+    } catch (error) {
+      console.error("Error al eliminar la imagen:", error);
+    }
+  };
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
+  const handleRadioChange = (e) => {
+    setFormData((prev) => ({
+      ...prev,
+      finalidad: e.target.value,
+    }));
+  };
+
+  const handleCondicionesFinanciacionChange = (e) => {
+    const { name, checked, value } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      condicionesFinanciacion: {
+        ...prev.condicionesFinanciacion,
+        [name]: { ...prev.condicionesFinanciacion[name], checked, valor: value },
+      },
+    }));
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-   
+    setSubmitting(true);
 
     try {
-      setSubmitting(true);
+      let imageUrls = [...formData.currentImages];
+      let pdfUrl = tractor.pdfUrl;
 
-     let imageUrls = [];
-               let pdfUrl = "";
-         
-               for (const imageFile of imageFiles) {
-                       const imageRef = ref(storage, `tractores/${Date.now()}_${imageFile.name}`);
-                       await uploadBytes(imageRef, imageFile);
-                       const url = await getDownloadURL(imageRef);
-                       imageUrls.push(url);
-                     }
+      for (const imageFile of imageFiles) {
+        const imageRef = ref(storage, `tractores/${Date.now()}_${imageFile.name}`);
+        await uploadBytes(imageRef, imageFile);
+        const url = await getDownloadURL(imageRef);
+        imageUrls.push(url);
+      }
 
       if (pdfFile) {
         const pdfRef = ref(storage, `tractores/${Date.now()}_${pdfFile.name}`);
@@ -70,137 +162,62 @@ const AddTractoresUsado = ({ subcategoria, categoria }) => {
       }
 
       const tractorData = {
-        title,
-        text,
+        ...formData,
         imageUrls,
         pdfUrl,
-        finalidad,
-        condicion,
-        marca,
-        modelo,
-        anoFabricacion,
-        linea,
-        potencia,
-        traccion,
-        direccion,
-        tipoMotor,
-        levanteTresPuntos,
-        cabina,
-        seccion,
-        varianteTraccion,
-        tipoRodado,
-        concesionario,
-        localidad,
-        precioIVA,
-        condicionesFinanciacion,
-        entrega,
-        categoria,
-        subcategoria,
       };
 
-      console.log("Datos del tractor a guardar:", tractorData);
-
-      await handleAddTractor(tractorData);
-
-      // Resetear los campos del formulario
-      setTitle("");
-      setText("");
-      setImageFiles([]); 
-      setPdfFile(null);
-      setFinalidad("");
-      setCondicion("");
-      setMarca("");
-      setModelo("");
-      setAnoFabricacion("");
-      setLinea("");
-      setPotencia("");
-      setTraccion("");
-      setDireccion("");
-      setTipoMotor("");
-      setLevanteTresPuntos("");
-      setCabina("");
-      setVarianteTraccion("");
-      setTipoRodado("");
-      setConcesionario("");
-      setSeccion("");
-      setLocalidad("");
-      setPrecioIVA({ moneda: "", valor: "" });
-      setCondicionesFinanciacion({
-        entregaFinanciacion: { checked: false, valor: "" },
-        cuotas: { checked: false, valor: "" },
-        financiacionFabrica: false,
-        financiado: { checked: false, valor: "" },
-        cheques: { checked: false, valor: "" },
-        aceptaCanje: false,
-        tasaDolares: { checked: false, valor: "" },
-        tasaPesos: { checked: false, valor: "" },
-        aConvenir: false,
-      });
-      setEntrega("");
-
-      if (imageInputRef.current) {
-        imageInputRef.current.value = "";
-      }
-      if (pdfInputRef.current) {
-        pdfInputRef.current.value = "";
-      }
-
-      setShowAlert(true); // Mostrar la alerta
+      await handleUpdateTractor(id, tractorData);
+      setShowAlert(true);
       setTimeout(() => setShowAlert(false), 5000);
     } catch (err) {
-      console.error("❌ Error al agregar tractor:", err);
+      console.error("Error al actualizar tractor:", err);
     } finally {
       setSubmitting(false);
     }
   };
 
-  const handleRadioChange = (e) => {
-    setFinalidad(e.target.value);
-  };
-
-  const handleCondicionesFinanciacionChange = (e) => {
-    const { name, checked, value } = e.target;
-    setCondicionesFinanciacion((prev) => ({
-      ...prev,
-      [name]: { ...prev[name], checked, valor: value },
-    }));
-  };
+    if (!tractor) {
+    return (
+      <div className="d-flex justify-content-center align-items-center" style={{ height: '100vh' }}>
+        <div className="spinner-border text-success" role="status"></div>
+      </div>
+    );
+  }
 
   return (
     <div className="container py-4">
-      <h2 className="mb-4">Agregar Tractor Usado</h2>
+      <h2 className="mb-4">Editar Tractor</h2>
       <form onSubmit={handleSubmit} className="mb-5">
-        
-
-        <div className="mb-3 d-flex  ">
+        <div className="mb-3 d-flex">
           <label className="form-label mb-0">Finalidad</label>
           <div className="d-flex gap-3" style={{ marginLeft: "31px" }}>
-            <label className="d-flex  gap-1">
+            <label className="d-flex gap-1">
               <input
                 type="radio"
                 name="finalidad"
                 value="Vendo"
-                checked={finalidad === "Vendo"}
+                checked={formData.finalidad === "Vendo"}
                 onChange={handleRadioChange}
               />
               Vendo
             </label>
-            <label className="d-flex  gap-1">
+            <label className="d-flex gap-1">
               <input
                 type="radio"
                 name="finalidad"
                 value="Comprar"
-                checked={finalidad === "Comprar"}
+                checked={formData.finalidad === "Comprar"}
                 onChange={handleRadioChange}
               />
               Comprar
             </label>
-            <label className="d-flex  gap-1">
+            <label className="d-flex gap-1">
               <input
                 type="radio"
                 name="finalidad"
                 value="Alquilo"
-                checked={finalidad === "Alquilo"}
+                checked={formData.finalidad === "Alquilo"}
                 onChange={handleRadioChange}
               />
               Alquilo
@@ -208,24 +225,26 @@ const AddTractoresUsado = ({ subcategoria, categoria }) => {
           </div>
         </div>
 
-        <div className="mb-3 d-flex  ">
+        <div className="mb-3 d-flex">
           <label className="form-label mb-0">Condición</label>
           <div className="d-flex gap-3 mx-4">
-            <label className="d-flex  gap-1">
+            <label className="d-flex gap-1">
               <input
                 type="radio"
-                name="Nuevo"
-                checked={condicion === "Nuevo"}
-                onChange={(e) => setCondicion(e.target.name)}
+                name="condicion"
+                value="Nuevo"
+                checked={formData.condicion === "Nuevo"}
+                onChange={handleChange}
               />
               <span>Nuevo</span>
             </label>
-            <label className="d-flex  gap-1">
+            <label className="d-flex gap-1">
               <input
                 type="radio"
-                name="Usado"
-                checked={condicion === "Usado"}
-                onChange={(e) => setCondicion(e.target.name)}
+                name="condicion"
+                value="Usado"
+                checked={formData.condicion === "Usado"}
+                onChange={handleChange}
               />
               <span>Usado</span>
             </label>
@@ -238,9 +257,9 @@ const AddTractoresUsado = ({ subcategoria, categoria }) => {
             type="text"
             className="form-control"
             placeholder="Título"
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-         
+            name="title"
+            value={formData.title}
+            onChange={handleChange}
             maxLength={55}
           />
           <small className="form-text text-muted justify-content-start d-flex">
@@ -254,8 +273,9 @@ const AddTractoresUsado = ({ subcategoria, categoria }) => {
             type="text"
             className="form-control"
             placeholder="Marca"
-            value={marca}
-            onChange={(e) => setMarca(e.target.value)}
+            name="marca"
+            value={formData.marca}
+            onChange={handleChange}
           />
         </div>
 
@@ -265,8 +285,9 @@ const AddTractoresUsado = ({ subcategoria, categoria }) => {
             type="text"
             className="form-control"
             placeholder="Modelo"
-            value={modelo}
-            onChange={(e) => setModelo(e.target.value)}
+            name="modelo"
+            value={formData.modelo}
+            onChange={handleChange}
           />
         </div>
 
@@ -274,8 +295,9 @@ const AddTractoresUsado = ({ subcategoria, categoria }) => {
           <label className="form-label">Año de fabricación</label>
           <select
             className="form-select"
-            value={anoFabricacion}
-            onChange={(e) => setAnoFabricacion(e.target.value)}
+            name="anoFabricacion"
+            value={formData.anoFabricacion}
+            onChange={handleChange}
           >
             <option value="">Selecciona un año</option>
             {Array.from({ length: 2025 - 1990 + 1 }, (_, i) => 1990 + i).map(
@@ -294,8 +316,9 @@ const AddTractoresUsado = ({ subcategoria, categoria }) => {
             type="text"
             className="form-control"
             placeholder="Línea"
-            value={linea}
-            onChange={(e) => setLinea(e.target.value)}
+            name="linea"
+            value={formData.linea}
+            onChange={handleChange}
           />
         </div>
 
@@ -303,8 +326,9 @@ const AddTractoresUsado = ({ subcategoria, categoria }) => {
           <label className="form-label">Potencia (HP)</label>
           <select
             className="form-select"
-            value={potencia}
-            onChange={(e) => setPotencia(e.target.value)}
+            name="potencia"
+            value={formData.potencia}
+            onChange={handleChange}
           >
             <option value="">Selecciona una opción</option>
             <option value="Menos de 100">Menos de 100</option>
@@ -317,15 +341,16 @@ const AddTractoresUsado = ({ subcategoria, categoria }) => {
           <label className="form-label">Tipo de Tractor</label>
           <select
             className="form-select"
-            value={seccion}
-            onChange={(e) => setSeccion(e.target.value)}
+            name="seccion"
+            value={formData.seccion}
+            onChange={handleChange}
           >
             <option value="">Selecciona una opción</option>
-            <option value="A">Serie RA 25 a 70 hp</option>
-            <option value="B"> Serie RD 30 a 70 hp</option>
-            <option value="C">Serie RA 45 a 90 hp</option>
-            <option value="D"> Serie RC 100 a 140 hp</option>
-            <option value="E">Serie RS 160 a 220 hp</option>
+            <option value="A">25 a 70 hp</option>
+            <option value="B">30 a 70 hp</option>
+            <option value="C">45 a 90 hp</option>
+            <option value="D">100 a 140 hp</option>
+            <option value="E">160 a 260 hp</option>
           </select>
         </div>
 
@@ -333,8 +358,9 @@ const AddTractoresUsado = ({ subcategoria, categoria }) => {
           <label className="form-label">Tracción</label>
           <select
             className="form-select"
-            value={traccion}
-            onChange={(e) => setTraccion(e.target.value)}
+            name="traccion"
+            value={formData.traccion}
+            onChange={handleChange}
           >
             <option value="">Selecciona una opción</option>
             <option value="Traccion doble">Tracción doble</option>
@@ -347,8 +373,9 @@ const AddTractoresUsado = ({ subcategoria, categoria }) => {
           <label className="form-label">Dirección</label>
           <select
             className="form-select"
-            value={direccion}
-            onChange={(e) => setDireccion(e.target.value)}
+            name="direccion"
+            value={formData.direccion}
+            onChange={handleChange}
           >
             <option value="">Selecciona una opción</option>
             <option value="Asistida">Asistida</option>
@@ -362,8 +389,9 @@ const AddTractoresUsado = ({ subcategoria, categoria }) => {
           <label className="form-label">Tipo de motor</label>
           <select
             className="form-select"
-            value={tipoMotor}
-            onChange={(e) => setTipoMotor(e.target.value)}
+            name="tipoMotor"
+            value={formData.tipoMotor}
+            onChange={handleChange}
           >
             <option value="">Selecciona una opción</option>
             <option value="a gas">A gas</option>
@@ -377,14 +405,15 @@ const AddTractoresUsado = ({ subcategoria, categoria }) => {
           <label className="form-label">Levante a 3 puntos</label>
           <select
             className="form-select"
-            value={levanteTresPuntos}
-            onChange={(e) => setLevanteTresPuntos(e.target.value)}
+            name="levanteTresPuntos"
+            value={formData.levanteTresPuntos}
+            onChange={handleChange}
           >
             <option value="">Selecciona una opción</option>
-            <option value="con levante tres puntos">
+            <option value="Con levante tres puntos">
               Con levante tres puntos
             </option>
-            <option value="sin levante tres puntos">
+            <option value="Sin levante tres puntos">
               Sin levante tres puntos
             </option>
           </select>
@@ -394,12 +423,13 @@ const AddTractoresUsado = ({ subcategoria, categoria }) => {
           <label className="form-label">Cabina</label>
           <select
             className="form-select"
-            value={cabina}
-            onChange={(e) => setCabina(e.target.value)}
+            name="cabina"
+            value={formData.cabina}
+            onChange={handleChange}
           >
             <option value="">Selecciona una opción</option>
-            <option value="con cabina">Con cabina</option>
-            <option value="sin cabina">Sin cabina</option>
+            <option value="Con cabina">Con cabina</option>
+            <option value="Sin cabina">Sin cabina</option>
           </select>
         </div>
 
@@ -407,8 +437,9 @@ const AddTractoresUsado = ({ subcategoria, categoria }) => {
           <label className="form-label">Variante de tracción</label>
           <select
             className="form-select"
-            value={varianteTraccion}
-            onChange={(e) => setVarianteTraccion(e.target.value)}
+            name="varianteTraccion"
+            value={formData.varianteTraccion}
+            onChange={handleChange}
           >
             <option value="">Selecciona una opción</option>
             <option value="Articulado">Articulado</option>
@@ -420,8 +451,9 @@ const AddTractoresUsado = ({ subcategoria, categoria }) => {
           <label className="form-label">Tipo de rodado</label>
           <select
             className="form-select"
-            value={tipoRodado}
-            onChange={(e) => setTipoRodado(e.target.value)}
+            name="tipoRodado"
+            value={formData.tipoRodado}
+            onChange={handleChange}
           >
             <option value="">Selecciona una opción</option>
             <option value="Neumatico">Neumático</option>
@@ -433,8 +465,9 @@ const AddTractoresUsado = ({ subcategoria, categoria }) => {
           <label className="form-label">Concesionario</label>
           <select
             className="form-select"
-            value={concesionario}
-            onChange={(e) => setConcesionario(e.target.value)}
+            name="concesionario"
+            value={formData.concesionario}
+            onChange={handleChange}
           >
             <option value="">Selecciona una opción</option>
             <option value="AgroCosecha S.A">AgroCosecha S.A</option>
@@ -448,8 +481,9 @@ const AddTractoresUsado = ({ subcategoria, categoria }) => {
             type="text"
             className="form-control"
             placeholder="Localidad"
-            value={localidad}
-            onChange={(e) => setLocalidad(e.target.value)}
+            name="localidad"
+            value={formData.localidad}
+            onChange={handleChange}
           />
         </div>
 
@@ -458,9 +492,13 @@ const AddTractoresUsado = ({ subcategoria, categoria }) => {
           <div className="input-group">
             <select
               className="form-select"
-              value={precioIVA.moneda}
+              name="precioIVA.moneda"
+              value={formData.precioIVA.moneda}
               onChange={(e) =>
-                setPrecioIVA({ ...precioIVA, moneda: e.target.value })
+                setFormData((prev) => ({
+                  ...prev,
+                  precioIVA: { ...prev.precioIVA, moneda: e.target.value },
+                }))
               }
             >
               <option value="">Selecciona una moneda</option>
@@ -471,9 +509,13 @@ const AddTractoresUsado = ({ subcategoria, categoria }) => {
               type="number"
               className="form-control"
               placeholder="Valor"
-              value={precioIVA.valor}
+              name="precioIVA.valor"
+              value={formData.precioIVA.valor}
               onChange={(e) =>
-                setPrecioIVA({ ...precioIVA, valor: e.target.value })
+                setFormData((prev) => ({
+                  ...prev,
+                  precioIVA: { ...prev.precioIVA, valor: e.target.value },
+                }))
               }
             />
           </div>
@@ -482,9 +524,9 @@ const AddTractoresUsado = ({ subcategoria, categoria }) => {
             <textarea
               className="form-control"
               placeholder="Descripción"
-              value={text}
-              onChange={(e) => setText(e.target.value)}
-            
+              name="text"
+              value={formData.text}
+              onChange={handleChange}
             />
           </div>
         </div>
@@ -494,14 +536,13 @@ const AddTractoresUsado = ({ subcategoria, categoria }) => {
             Condiciones y Financiación
           </label>
 
-          {/* Entrega + Financiación */}
           <div className="d-flex justify-content-between align-items-center mb-4 gap-4">
             <label className="form-check">
               <input
                 type="checkbox"
                 className="form-check-input"
                 name="entregaFinanciacion"
-                checked={condicionesFinanciacion.entregaFinanciacion.checked}
+                checked={formData.condicionesFinanciacion.entregaFinanciacion.checked}
                 onChange={handleCondicionesFinanciacionChange}
               />
               Entrega + Financiación
@@ -511,30 +552,32 @@ const AddTractoresUsado = ({ subcategoria, categoria }) => {
                 type="number"
                 className="form-control form-control-sm me-2"
                 placeholder="Valor"
-                value={condicionesFinanciacion.entregaFinanciacion.valor}
+                value={formData.condicionesFinanciacion.entregaFinanciacion.valor}
                 onChange={(e) =>
-                  setCondicionesFinanciacion((prev) => ({
+                  setFormData((prev) => ({
                     ...prev,
-                    entregaFinanciacion: {
-                      ...prev.entregaFinanciacion,
-                      valor: e.target.value,
+                    condicionesFinanciacion: {
+                      ...prev.condicionesFinanciacion,
+                      entregaFinanciacion: {
+                        ...prev.condicionesFinanciacion.entregaFinanciacion,
+                        valor: e.target.value,
+                      },
                     },
                   }))
                 }
-                disabled={!condicionesFinanciacion.entregaFinanciacion.checked}
+                disabled={!formData.condicionesFinanciacion.entregaFinanciacion.checked}
               />
               <span className="flex-shrink-0">% entrega + financiación</span>
             </div>
           </div>
 
-          {/* Cuotas */}
           <div className="d-flex justify-content-between align-items-center mb-4 gap-4">
             <label className="form-check">
               <input
                 type="checkbox"
                 className="form-check-input"
                 name="cuotas"
-                checked={condicionesFinanciacion.cuotas.checked}
+                checked={formData.condicionesFinanciacion.cuotas.checked}
                 onChange={handleCondicionesFinanciacionChange}
               />
               Cuotas
@@ -545,31 +588,36 @@ const AddTractoresUsado = ({ subcategoria, categoria }) => {
                 type="number"
                 className="form-control form-control-sm me-2"
                 placeholder="Valor"
-                value={condicionesFinanciacion.cuotas.valor}
+                value={formData.condicionesFinanciacion.cuotas.valor}
                 onChange={(e) =>
-                  setCondicionesFinanciacion((prev) => ({
+                  setFormData((prev) => ({
                     ...prev,
-                    cuotas: { ...prev.cuotas, valor: e.target.value },
+                    condicionesFinanciacion: {
+                      ...prev.condicionesFinanciacion,
+                      cuotas: { ...prev.condicionesFinanciacion.cuotas, valor: e.target.value },
+                    },
                   }))
                 }
-                disabled={!condicionesFinanciacion.cuotas.checked}
+                disabled={!formData.condicionesFinanciacion.cuotas.checked}
               />
               <span>cuotas</span>
             </div>
           </div>
 
-          {/* Financiación de la Fábrica */}
           <div className="d-flex align-items-center mb-4">
             <label className="form-check">
               <input
                 type="checkbox"
                 className="form-check-input"
                 name="financiacionFabrica"
-                checked={condicionesFinanciacion.financiacionFabrica}
+                checked={formData.condicionesFinanciacion.financiacionFabrica}
                 onChange={(e) =>
-                  setCondicionesFinanciacion((prev) => ({
+                  setFormData((prev) => ({
                     ...prev,
-                    financiacionFabrica: e.target.checked,
+                    condicionesFinanciacion: {
+                      ...prev.condicionesFinanciacion,
+                      financiacionFabrica: e.target.checked,
+                    },
                   }))
                 }
               />
@@ -577,14 +625,13 @@ const AddTractoresUsado = ({ subcategoria, categoria }) => {
             </label>
           </div>
 
-          {/* Financiado */}
           <div className="d-flex justify-content-between align-items-center mb-4 gap-4">
             <label className="form-check">
               <input
                 type="checkbox"
                 className="form-check-input"
                 name="financiado"
-                checked={condicionesFinanciacion.financiado.checked}
+                checked={formData.condicionesFinanciacion.financiado.checked}
                 onChange={handleCondicionesFinanciacionChange}
               />
               Financiado
@@ -595,27 +642,29 @@ const AddTractoresUsado = ({ subcategoria, categoria }) => {
                 type="number"
                 className="form-control form-control-sm me-2"
                 placeholder="Valor"
-                value={condicionesFinanciacion.financiado.valor}
+                value={formData.condicionesFinanciacion.financiado.valor}
                 onChange={(e) =>
-                  setCondicionesFinanciacion((prev) => ({
+                  setFormData((prev) => ({
                     ...prev,
-                    financiado: { ...prev.financiado, valor: e.target.value },
+                    condicionesFinanciacion: {
+                      ...prev.condicionesFinanciacion,
+                      financiado: { ...prev.condicionesFinanciacion.financiado, valor: e.target.value },
+                    },
                   }))
                 }
-                disabled={!condicionesFinanciacion.financiado.checked}
+                disabled={!formData.condicionesFinanciacion.financiado.checked}
               />
               <span>años</span>
             </div>
           </div>
 
-          {/* Cheques */}
           <div className="d-flex justify-content-between align-items-center mb-4 gap-4">
             <label className="form-check">
               <input
                 type="checkbox"
                 className="form-check-input"
                 name="cheques"
-                checked={condicionesFinanciacion.cheques.checked}
+                checked={formData.condicionesFinanciacion.cheques.checked}
                 onChange={handleCondicionesFinanciacionChange}
               />
               Cheques
@@ -626,31 +675,36 @@ const AddTractoresUsado = ({ subcategoria, categoria }) => {
                 type="number"
                 className="form-control form-control-sm me-2"
                 placeholder="Valor"
-                value={condicionesFinanciacion.cheques.valor}
+                value={formData.condicionesFinanciacion.cheques.valor}
                 onChange={(e) =>
-                  setCondicionesFinanciacion((prev) => ({
+                  setFormData((prev) => ({
                     ...prev,
-                    cheques: { ...prev.cheques, valor: e.target.value },
+                    condicionesFinanciacion: {
+                      ...prev.condicionesFinanciacion,
+                      cheques: { ...prev.condicionesFinanciacion.cheques, valor: e.target.value },
+                    },
                   }))
                 }
-                disabled={!condicionesFinanciacion.cheques.checked}
+                disabled={!formData.condicionesFinanciacion.cheques.checked}
               />
               <span>cheques</span>
             </div>
           </div>
 
-          {/* Acepta Canje */}
           <div className="d-flex align-items-center mb-4">
             <label className="form-check">
               <input
                 type="checkbox"
                 className="form-check-input"
                 name="aceptaCanje"
-                checked={condicionesFinanciacion.aceptaCanje}
+                checked={formData.condicionesFinanciacion.aceptaCanje}
                 onChange={(e) =>
-                  setCondicionesFinanciacion((prev) => ({
+                  setFormData((prev) => ({
                     ...prev,
-                    aceptaCanje: e.target.checked,
+                    condicionesFinanciacion: {
+                      ...prev.condicionesFinanciacion,
+                      aceptaCanje: e.target.checked,
+                    },
                   }))
                 }
               />
@@ -658,14 +712,13 @@ const AddTractoresUsado = ({ subcategoria, categoria }) => {
             </label>
           </div>
 
-          {/* Tasa en dólares */}
           <div className="d-flex justify-content-between align-items-center mb-4 gap-4">
             <label className="form-check">
               <input
                 type="checkbox"
                 className="form-check-input"
                 name="tasaDolares"
-                checked={condicionesFinanciacion.tasaDolares.checked}
+                checked={formData.condicionesFinanciacion.tasaDolares.checked}
                 onChange={handleCondicionesFinanciacionChange}
               />
               Tasa en dólares
@@ -676,27 +729,29 @@ const AddTractoresUsado = ({ subcategoria, categoria }) => {
                 type="number"
                 className="form-control form-control-sm me-2"
                 placeholder="Valor"
-                value={condicionesFinanciacion.tasaDolares.valor}
+                value={formData.condicionesFinanciacion.tasaDolares.valor}
                 onChange={(e) =>
-                  setCondicionesFinanciacion((prev) => ({
+                  setFormData((prev) => ({
                     ...prev,
-                    tasaDolares: { ...prev.tasaDolares, valor: e.target.value },
+                    condicionesFinanciacion: {
+                      ...prev.condicionesFinanciacion,
+                      tasaDolares: { ...prev.condicionesFinanciacion.tasaDolares, valor: e.target.value },
+                    },
                   }))
                 }
-                disabled={!condicionesFinanciacion.tasaDolares.checked}
+                disabled={!formData.condicionesFinanciacion.tasaDolares.checked}
               />
               <span className="flex-shrink-0">% en dólares</span>
             </div>
           </div>
 
-          {/* Tasa en pesos */}
           <div className="d-flex justify-content-between align-items-center mb-4 gap-4">
             <label className="form-check">
               <input
                 type="checkbox"
                 className="form-check-input"
                 name="tasaPesos"
-                checked={condicionesFinanciacion.tasaPesos.checked}
+                checked={formData.condicionesFinanciacion.tasaPesos.checked}
                 onChange={handleCondicionesFinanciacionChange}
               />
               Tasa en pesos
@@ -707,31 +762,36 @@ const AddTractoresUsado = ({ subcategoria, categoria }) => {
                 type="number"
                 className="form-control form-control-sm me-2"
                 placeholder="Valor"
-                value={condicionesFinanciacion.tasaPesos.valor}
+                value={formData.condicionesFinanciacion.tasaPesos.valor}
                 onChange={(e) =>
-                  setCondicionesFinanciacion((prev) => ({
+                  setFormData((prev) => ({
                     ...prev,
-                    tasaPesos: { ...prev.tasaPesos, valor: e.target.value },
+                    condicionesFinanciacion: {
+                      ...prev.condicionesFinanciacion,
+                      tasaPesos: { ...prev.condicionesFinanciacion.tasaPesos, valor: e.target.value },
+                    },
                   }))
                 }
-                disabled={!condicionesFinanciacion.tasaPesos.checked}
+                disabled={!formData.condicionesFinanciacion.tasaPesos.checked}
               />
               <span className="flex-shrink-0">% en pesos</span>
             </div>
           </div>
 
-          {/* A convenir */}
           <div className="d-flex align-items-center mb-4">
             <label className="form-check">
               <input
                 type="checkbox"
                 className="form-check-input"
                 name="aConvenir"
-                checked={condicionesFinanciacion.aConvenir}
+                checked={formData.condicionesFinanciacion.aConvenir}
                 onChange={(e) =>
-                  setCondicionesFinanciacion((prev) => ({
+                  setFormData((prev) => ({
                     ...prev,
-                    aConvenir: e.target.checked,
+                    condicionesFinanciacion: {
+                      ...prev.condicionesFinanciacion,
+                      aConvenir: e.target.checked,
+                    },
                   }))
                 }
               />
@@ -744,8 +804,9 @@ const AddTractoresUsado = ({ subcategoria, categoria }) => {
           <label className="form-label">Entrega</label>
           <select
             className="form-select"
-            value={entrega}
-            onChange={(e) => setEntrega(e.target.value)}
+            name="entrega"
+            value={formData.entrega}
+            onChange={handleChange}
           >
             <option value="">Selecciona una opción</option>
             <option value="Inmediata">Inmediata</option>
@@ -758,50 +819,72 @@ const AddTractoresUsado = ({ subcategoria, categoria }) => {
           </select>
         </div>
 
-       <div className="mb-3">
-                <label className="form-label">Imagenes</label>
-                <input
-                  type="file"
-                  className="form-control"
-                  accept="image/*"
-                  multiple
-                  onChange={(e) => {
-                    const files = Array.from(e.target.files);
-                    setImageFiles((prevImages) => [...prevImages, ...files]);
-                  }}
-                  ref={imageInputRef}
+        <div className="mb-3">
+          <label className="form-label">Imágenes</label>
+          <input
+            type="file"
+            className="form-control"
+            accept="image/*"
+            multiple
+            onChange={(e) => {
+              const files = Array.from(e.target.files);
+              setImageFiles((prevImages) => [...prevImages, ...files]);
+            }}
+            ref={imageInputRef}
+          />
+        </div>
+
+        {formData.currentImages.length > 0 && (
+          <div className="row mt-3">
+            <label className="form-label">Imágenes Actuales</label>
+            {formData.currentImages.map((imageUrl, index) => (
+              <div key={index} className="col-3 mb-4">
+                <img
+                  src={imageUrl}
+                  alt={`current-${index}`}
+                  className="img-fluid rounded"
                 />
-              </div>
-              
-              {/* Mostrar solo si hay imágenes seleccionadas */}
-              {imageFiles.length > 0 && (
-                <div className="row mt-3">
-                  <label className="form-label">Imágenes Seleccionadas</label>
-                  {imageFiles.map((image, index) => (
-                    <div key={index} className="col-3 mb-4">
-                    <img
-                      src={URL.createObjectURL(image)}
-                      alt={`preview-${index}`}
-                      className="img-fluid rounded"
-                    />
-                    <div className="text-center mt-2">
-                      <button
-                        type="button"
-                        className="btn btn-danger btn-sm"
-                        onClick={() => {
-                          setImageFiles((prevImages) =>
-                            prevImages.filter((_, i) => i !== index)
-                          );
-                        }}
-                      >
-                        Eliminar
-                      </button>
-                    </div>
-                  </div>
-                  
-                  ))}
+                <div className="text-center mt-2">
+                  <button
+                    type="button"
+                    className="btn btn-danger btn-sm"
+                    onClick={() => handleDeleteImage(imageUrl)}
+                  >
+                    Eliminar
+                  </button>
                 </div>
-              )}
+              </div>
+            ))}
+          </div>
+        )}
+
+        {imageFiles.length > 0 && (
+          <div className="row mt-3">
+            <label className="form-label">Imágenes Seleccionadas</label>
+            {imageFiles.map((image, index) => (
+              <div key={index} className="col-3 mb-4">
+                <img
+                  src={URL.createObjectURL(image)}
+                  alt={`preview-${index}`}
+                  className="img-fluid rounded"
+                />
+                <div className="text-center mt-2">
+                  <button
+                    type="button"
+                    className="btn btn-danger btn-sm"
+                    onClick={() => {
+                      setImageFiles((prevImages) =>
+                        prevImages.filter((_, i) => i !== index)
+                      );
+                    }}
+                  >
+                    Eliminar
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
 
         <div className="mb-3">
           <label className="form-label">PDF</label>
@@ -815,11 +898,11 @@ const AddTractoresUsado = ({ subcategoria, categoria }) => {
         </div>
 
         <button type="submit" className="btn btn-primary" disabled={submitting}>
-        {submitting ? "Publicando..." : "Publicar"}
+          {submitting ? "Guardando..." : "Guardar Cambios"}
         </button>
         {showAlert && (
           <div className="alert alert-info mt-2" role="alert">
-           ¡Producto agregado correctamente!
+            ¡Tractor actualizado correctamente!
           </div>
         )}
       </form>
@@ -827,4 +910,4 @@ const AddTractoresUsado = ({ subcategoria, categoria }) => {
   );
 };
 
-export default AddTractoresUsado;
+export default EditTractor;

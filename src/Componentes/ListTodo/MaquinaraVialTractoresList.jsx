@@ -39,6 +39,7 @@ const MaquinaraVialTractoresList = () => {
               />
               <div className="card-body">
                 <h5 className="card-title">{maquinaria.title}</h5>
+                <p>{maquinaria.condicion}</p>
                 <hr />
                 <p className="card-text">{maquinaria.text}</p>
                 <hr />

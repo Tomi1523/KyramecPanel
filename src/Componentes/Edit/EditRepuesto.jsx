@@ -6,7 +6,7 @@ import { storage } from "../../services/firebase";
 
 const EditRepuesto = () => {
   const { id } = useParams();
-  const { getRepuestoById, handleEditRepuesto, loading } = useRepuestos();
+  const { getRepuestoById, handleEditRepuesto} = useRepuestos();
   const [repuesto, setRepuesto] = useState(null);
   const [showAlert, setShowAlert] = useState(false);
   const [formData, setFormData] = useState({
@@ -104,14 +104,13 @@ const EditRepuesto = () => {
     }
   };
 
-  if (loading) {
+    if (!repuesto) {
     return (
       <div className="d-flex justify-content-center align-items-center" style={{ height: '100vh' }}>
         <div className="spinner-border text-success" role="status"></div>
       </div>
     );
   }
-
   return (
     <div className="container py-4">
       <h2 className="mb-4">Editar Repuesto</h2>

@@ -1,6 +1,6 @@
 // useImplementos.js
 import { useState, useEffect } from 'react';
-import { addImplementos, getImplementos, deleteImplementos } from '../firestoreService';
+import { addImplementos, getImplementos, deleteImplementos, editImplemento, fetchImplementoById } from '../firestoreService';
 
 export const useImplementos = () => {
   const [implementos, setImplementos] = useState([]);
@@ -42,5 +42,25 @@ export const useImplementos = () => {
     }
   };
 
-  return { implementos, loading, error, handleAddImplementos, handleDeleteImplementos };
+  const handleEditImplemento = async (implementoId, updatedData) => {
+    try {
+      await editImplemento(implementoId, updatedData);
+      const updatedImplementos = await getImplementos();
+      setImplementos(updatedImplementos);
+    } catch (err) {
+      setError("Error al editar implemento.");
+    }
+  };
+
+  const getImplementoById = async (id) => {
+    try {
+      return await fetchImplementoById(id);
+    } catch (error) {
+      console.log("Error en getImplementoById del hook:", error);
+      setError("Error al obtener el implemento por ID.");
+      return null;
+    }
+  };
+
+  return { implementos, loading, error, handleAddImplementos, handleDeleteImplementos, handleEditImplemento, getImplementoById };
 };

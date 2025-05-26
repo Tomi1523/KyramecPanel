@@ -4,8 +4,8 @@ import { useNavigate } from 'react-router-dom';
 const Opciones = () => {
     const navigate = useNavigate();
 
-    const handleGoToTractores = () => {
-        navigate("/opciones/tractores");
+    const handleGoToMaquinarias = () => {
+        navigate("/opciones/maquinarias-agricolas");
     };
 
     const handleGoToMaquinariaVialTractores = () => {
@@ -44,8 +44,8 @@ const Opciones = () => {
 
   <div className="row justify-content-center">
     <div className="col-12 col-md-8 d-flex flex-column gap-2">
-      <button className="btn btn-success" onClick={handleGoToTractores}>
-        Ir a Tractores
+      <button className="btn btn-success" onClick={handleGoToMaquinarias}>
+        Ir a Maquinarias Agricolas
       </button>
       <button className="btn btn-success" onClick={handleGoToMaquinariaVialTractores}>
         Ir a Maquinarias Viales

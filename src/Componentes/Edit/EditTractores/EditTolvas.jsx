@@ -1,10 +1,10 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { useTractores } from '../../Use/useTractores';
-import { storage } from "../../services/firebase";
+import { storage } from "../../../services/firebase";
 import { ref, uploadBytes, getDownloadURL, deleteObject } from "firebase/storage";
+import { useTractores } from '../../../Use/useTractores';
 
-const EditTractor = () => {
+const EditTolvas = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const { getTractorById, handleUpdateTractor } = useTractores();
@@ -22,20 +22,25 @@ const EditTractor = () => {
     finalidad: '',
     condicion: '',
     marca: '',
-    modelo: '',
-    anoFabricacion: '',
-    linea: '',
+    serie: '',
+    tipoTolva: '',
+    toneladas: '',
+    ejes: '',
+    sinfin: '',
+    balancin: '',
+    tiempoDescarga: '',
     potencia: '',
-    traccion: '',
-    seccion: '',
-    direccion: '',
-    tipoMotor: '',
-    levanteTresPuntos: '',
-    cabina: '',
-    varianteTraccion: '',
-    tipoRodado: '',
+    sistemaPotenciaAutonomo: '',
+    accesoriosIncluidos: '',
+    incluyeBalanza: '',
+    diametroTuboDescarga: '',
+    cultivoUso: '',
+    anoFabricacion: '',
     concesionario: '',
     localidad: '',
+    cuotaSinInteres: '',
+    costoEnvio: '',
+    promocionesPago: '',
     precioIVA: { moneda: '', valor: '' },
     condicionesFinanciacion: {
       entregaFinanciacion: { checked: false, valor: '' },
@@ -66,20 +71,25 @@ const EditTractor = () => {
           finalidad: data.finalidad || '',
           condicion: data.condicion || '',
           marca: data.marca || '',
-          modelo: data.modelo || '',
-          anoFabricacion: data.anoFabricacion || '',
-          linea: data.linea || '',
+          serie: data.serie || '',
+          tipoTolva: data.tipoTolva || '',
+          toneladas: data.toneladas || '',
+          ejes: data.ejes || '',
+          sinfin: data.sinfin || '',
+          balancin: data.balancin || '',
+          tiempoDescarga: data.tiempoDescarga || '',
           potencia: data.potencia || '',
-          traccion: data.traccion || '',
-          seccion: data.seccion || '',
-          direccion: data.direccion || '',
-          tipoMotor: data.tipoMotor || '',
-          levanteTresPuntos: data.levanteTresPuntos || '',
-          cabina: data.cabina || '',
-          varianteTraccion: data.varianteTraccion || '',
-          tipoRodado: data.tipoRodado || '',
+          sistemaPotenciaAutonomo: data.sistemaPotenciaAutonomo || '',
+          accesoriosIncluidos: data.accesoriosIncluidos || '',
+          incluyeBalanza: data.incluyeBalanza || '',
+          diametroTuboDescarga: data.diametroTuboDescarga || '',
+          cultivoUso: data.cultivoUso || '',
+          anoFabricacion: data.anoFabricacion || '',
           concesionario: data.concesionario || '',
           localidad: data.localidad || '',
+          cuotaSinInteres: data.cuotaSinInteres || '',
+          costoEnvio: data.costoEnvio || '',
+          promocionesPago: data.promocionesPago || '',
           precioIVA: data.precioIVA || { moneda: '', valor: '' },
           condicionesFinanciacion: data.condicionesFinanciacion || {
             entregaFinanciacion: { checked: false, valor: '' },
@@ -176,11 +186,17 @@ const EditTractor = () => {
     }
   };
 
-  if (!tractor) return <div>Cargando...</div>;
+    if (!tractor) {
+    return (
+      <div className="d-flex justify-content-center align-items-center" style={{ height: '100vh' }}>
+        <div className="spinner-border text-success" role="status"></div>
+      </div>
+    );
+  }
 
   return (
     <div className="container py-4">
-      <h2 className="mb-4">Editar Tractor</h2>
+      <h2 className="mb-4">Editar Tolva</h2>
       <form onSubmit={handleSubmit} className="mb-5">
         <div className="mb-3 d-flex">
           <label className="form-label mb-0">Finalidad</label>
@@ -273,13 +289,194 @@ const EditTractor = () => {
         </div>
 
         <div className="mb-3">
-          <label className="form-label">Modelo</label>
+          <label className="form-label">Serie</label>
           <input
             type="text"
             className="form-control"
-            placeholder="Modelo"
-            name="modelo"
-            value={formData.modelo}
+            placeholder="Serie"
+            name="serie"
+            value={formData.serie}
+            onChange={handleChange}
+          />
+        </div>
+
+        <div className="mb-3">
+          <label className="form-label">Tipo de Tolva</label>
+          <select
+            className="form-select"
+            name="tipoTolva"
+            value={formData.tipoTolva}
+            onChange={handleChange}
+          >
+            <option value="">Selecciona una opción</option>
+            <option value="Autodescargable">Autodescargable</option>
+            <option value="Semillas y Fertilizantes">Semillas y Fertilizantes</option>
+            <option value="Silera">Silera</option>
+          </select>
+        </div>
+
+        <div className="mb-3">
+          <label className="form-label">Toneladas</label>
+          <select
+            className="form-select"
+            name="toneladas"
+            value={formData.toneladas}
+            onChange={handleChange}
+          >
+            <option value="">Selecciona una opción</option>
+            <option value="0 a 5 tn">0 a 5 tn</option>
+            <option value="5 a 10 tn">5 a 10 tn</option>
+            <option value="10 a 15 tn">10 a 15 tn</option>
+            <option value="15 a 20 tn">15 a 20 tn</option>
+            <option value="20 a 25 tn">20 a 25 tn</option>
+            <option value="25 a 30 tn">25 a 30 tn</option>
+            <option value="30 a 35 tn">30 a 35 tn</option>
+            <option value="35 a 40 tn">35 a 40 tn</option>
+            <option value="40 a 45 tn">40 a 45 tn</option>
+            <option value="45 a 50 tn">45 a 50 tn</option>
+            <option value="50 a 55 tn">50 a 55 tn</option>
+            <option value="más de 60 tn">más de 60 tn</option>
+          </select>
+        </div>
+
+        <div className="mb-3">
+          <label className="form-label">Ejes</label>
+          <select
+            className="form-select"
+            name="ejes"
+            value={formData.ejes}
+            onChange={handleChange}
+          >
+            <option value="">Selecciona una opción</option>
+            <option value="1 eje">1 eje</option>
+            <option value="2 ejes">2 ejes</option>
+            <option value="3 ejes">3 ejes</option>
+            <option value="1 eje mas 1 flotante">1 eje más 1 flotante</option>
+            <option value="2 ejes mas 2 flotantes">2 ejes más 2 flotantes</option>
+            <option value="4 ejes">4 ejes</option>
+            <option value="5 ejes">5 ejes</option>
+            <option value="6 ejes">6 ejes</option>
+            <option value="Montado">Montado</option>
+          </select>
+        </div>
+
+        <div className="mb-3">
+          <label className="form-label">Sinfín</label>
+          <select
+            className="form-select"
+            name="sinfin"
+            value={formData.sinfin}
+            onChange={handleChange}
+          >
+            <option value="">Selecciona una opción</option>
+            <option value="Con Sinfín">Con Sinfín</option>
+            <option value="sin Sinfín">Sin Sinfín</option>
+          </select>
+        </div>
+
+        <div className="mb-3">
+          <label className="form-label">Balancín</label>
+          <select
+            className="form-select"
+            name="balancin"
+            value={formData.balancin}
+            onChange={handleChange}
+          >
+            <option value="">Selecciona una opción</option>
+            <option value="Con balancín">Con balancín</option>
+            <option value="sin balancín">Sin balancín</option>
+          </select>
+        </div>
+
+        <div className="mb-3">
+          <label className="form-label">Tiempo de descarga</label>
+          <input
+            type="text"
+            className="form-control"
+            placeholder="Tiempo de descarga"
+            name="tiempoDescarga"
+            value={formData.tiempoDescarga}
+            onChange={handleChange}
+          />
+        </div>
+
+        <div className="mb-3">
+          <label className="form-label">Sistema Potencia Autónomo</label>
+          <select
+            className="form-select"
+            name="sistemaPotenciaAutonomo"
+            value={formData.sistemaPotenciaAutonomo}
+            onChange={handleChange}
+          >
+            <option value="">Selecciona una opción</option>
+            <option value="si">Sí</option>
+            <option value="no">No</option>
+          </select>
+        </div>
+
+        <div className="mb-3">
+          <label className="form-label">Potencia (HP)</label>
+          <select
+            className="form-select"
+            name="potencia"
+            value={formData.potencia}
+            onChange={handleChange}
+          >
+            <option value="">Selecciona una opción</option>
+            <option value="Menos de 100">Menos de 100</option>
+            <option value="Entre 101 y 200">Entre 101 y 200</option>
+            <option value="Mayor a 201">Mayor a 201</option>
+          </select>
+        </div>
+
+        <div className="mb-3">
+          <label className="form-label">Accesorios incluidos</label>
+          <select
+            className="form-select"
+            name="accesoriosIncluidos"
+            value={formData.accesoriosIncluidos}
+            onChange={handleChange}
+          >
+            <option value="">Selecciona una opción</option>
+            <option value="tanque de agua">Tanque de agua</option>
+            <option value="arcos para lona">Arcos para lona</option>
+          </select>
+        </div>
+
+        <div className="mb-3">
+          <label className="form-label">Incluye balanza</label>
+          <select
+            className="form-select"
+            name="incluyeBalanza"
+            value={formData.incluyeBalanza}
+            onChange={handleChange}
+          >
+            <option value="">Selecciona una opción</option>
+            <option value="si">Sí</option>
+            <option value="no">No</option>
+          </select>
+        </div>
+
+        <div className="mb-3">
+          <label className="form-label">Diámetro del tubo de descarga (mm)</label>
+          <input
+            type="text"
+            className="form-control"
+            placeholder="Diámetro del tubo de descarga (mm)"
+            name="diametroTuboDescarga"
+            value={formData.diametroTuboDescarga}
+            onChange={handleChange}
+          />
+        </div>
+
+        <div className="mb-3">
+          <label className="form-label">Cultivo/Uso</label>
+          <input
+            type="text"
+            className="form-control"
+            placeholder="Cultivo/Uso"
+            name="cultivoUso"
+            value={formData.cultivoUso}
             onChange={handleChange}
           />
         </div>
@@ -304,157 +501,6 @@ const EditTractor = () => {
         </div>
 
         <div className="mb-3">
-          <label className="form-label">Línea</label>
-          <input
-            type="text"
-            className="form-control"
-            placeholder="Línea"
-            name="linea"
-            value={formData.linea}
-            onChange={handleChange}
-          />
-        </div>
-
-        <div className="mb-3">
-          <label className="form-label">Potencia (HP)</label>
-          <select
-            className="form-select"
-            name="potencia"
-            value={formData.potencia}
-            onChange={handleChange}
-          >
-            <option value="">Selecciona una opción</option>
-            <option value="Menos de 100">Menos de 100</option>
-            <option value="Entre 101 y 200">Entre 101 y 200</option>
-            <option value="Mayor a 201">Mayor a 201</option>
-          </select>
-        </div>
-
-        <div className="mb-3">
-          <label className="form-label">Tipo de Tractor</label>
-          <select
-            className="form-select"
-            name="seccion"
-            value={formData.seccion}
-            onChange={handleChange}
-          >
-            <option value="">Selecciona una opción</option>
-            <option value="A">25 a 70 hp</option>
-            <option value="B">30 a 70 hp</option>
-            <option value="C">45 a 90 hp</option>
-            <option value="D">100 a 140 hp</option>
-            <option value="E">160 a 260 hp</option>
-          </select>
-        </div>
-
-        <div className="mb-3">
-          <label className="form-label">Tracción</label>
-          <select
-            className="form-select"
-            name="traccion"
-            value={formData.traccion}
-            onChange={handleChange}
-          >
-            <option value="">Selecciona una opción</option>
-            <option value="Traccion doble">Tracción doble</option>
-            <option value="Traccion simple">Tracción simple</option>
-            <option value="Traccion asistida">Tracción asistida</option>
-          </select>
-        </div>
-
-        <div className="mb-3">
-          <label className="form-label">Dirección</label>
-          <select
-            className="form-select"
-            name="direccion"
-            value={formData.direccion}
-            onChange={handleChange}
-          >
-            <option value="">Selecciona una opción</option>
-            <option value="Asistida">Asistida</option>
-            <option value="Hidraulica">Hidráulica</option>
-            <option value="Mecanica">Mecánica</option>
-            <option value="Electrica">Eléctrica</option>
-          </select>
-        </div>
-
-        <div className="mb-3">
-          <label className="form-label">Tipo de motor</label>
-          <select
-            className="form-select"
-            name="tipoMotor"
-            value={formData.tipoMotor}
-            onChange={handleChange}
-          >
-            <option value="">Selecciona una opción</option>
-            <option value="a gas">A gas</option>
-            <option value="nafta">Nafta</option>
-            <option value="diesel">Diésel</option>
-            <option value="electrico">Eléctrico</option>
-          </select>
-        </div>
-
-        <div className="mb-3">
-          <label className="form-label">Levante a 3 puntos</label>
-          <select
-            className="form-select"
-            name="levanteTresPuntos"
-            value={formData.levanteTresPuntos}
-            onChange={handleChange}
-          >
-            <option value="">Selecciona una opción</option>
-            <option value="Con levante tres puntos">
-              Con levante tres puntos
-            </option>
-            <option value="Sin levante tres puntos">
-              Sin levante tres puntos
-            </option>
-          </select>
-        </div>
-
-        <div className="mb-3">
-          <label className="form-label">Cabina</label>
-          <select
-            className="form-select"
-            name="cabina"
-            value={formData.cabina}
-            onChange={handleChange}
-          >
-            <option value="">Selecciona una opción</option>
-            <option value="Con cabina">Con cabina</option>
-            <option value="Sin cabina">Sin cabina</option>
-          </select>
-        </div>
-
-        <div className="mb-3">
-          <label className="form-label">Variante de tracción</label>
-          <select
-            className="form-select"
-            name="varianteTraccion"
-            value={formData.varianteTraccion}
-            onChange={handleChange}
-          >
-            <option value="">Selecciona una opción</option>
-            <option value="Articulado">Articulado</option>
-            <option value="Rigido">Rígido</option>
-          </select>
-        </div>
-
-        <div className="mb-3">
-          <label className="form-label">Tipo de rodado</label>
-          <select
-            className="form-select"
-            name="tipoRodado"
-            value={formData.tipoRodado}
-            onChange={handleChange}
-          >
-            <option value="">Selecciona una opción</option>
-            <option value="Neumatico">Neumático</option>
-            <option value="Oruga">Oruga</option>
-          </select>
-        </div>
-
-        <div className="mb-3">
           <label className="form-label">Concesionario</label>
           <select
             className="form-select"
@@ -469,6 +515,64 @@ const EditTractor = () => {
         </div>
 
         <div className="mb-3">
+          <label className="form-label">Cuota sin interés</label>
+          <select
+            className="form-select"
+            name="cuotaSinInteres"
+            value={formData.cuotaSinInteres}
+            onChange={handleChange}
+          >
+            <option value="">Selecciona una opción</option>
+            <option value="12 cuotas">12 cuotas</option>
+            <option value="3 cuotas">3 cuotas</option>
+            <option value="6 cuotas">6 cuotas</option>
+          </select>
+        </div>
+
+        <div className="mb-3">
+          <label className="form-label">Costo de envío</label>
+          <select
+            className="form-select"
+            name="costoEnvio"
+            value={formData.costoEnvio}
+            onChange={handleChange}
+          >
+            <option value="">Selecciona una opción</option>
+            <option value="Envio gratis">Envío gratis</option>
+          </select>
+        </div>
+
+        <div className="mb-3">
+          <label className="form-label">Promociones de pago</label>
+          <select
+            className="form-select"
+            name="promocionesPago"
+            value={formData.promocionesPago}
+            onChange={handleChange}
+          >
+            <option value="">Selecciona una opción</option>
+            <option value="10%OFF adicional con Tarjeta Agro">
+              10%OFF adicional con Tarjeta Agro
+            </option>
+            <option value="20%OFF adicional con Visa Agro">
+              20%OFF adicional con Visa Agro
+            </option>
+            <option value="25%OFF adicional con Visa">
+              25%OFF adicional con Visa
+            </option>
+            <option value="3%OFF adicional con AgroCanje Agro">
+              3%OFF adicional con AgroCanje Agro
+            </option>
+            <option value="35%OFF adicional con Visa Agro">
+              35%OFF adicional con Visa Agro
+            </option>
+            <option value="Descuento con Tarjeta Agro">
+              Descuento con Tarjeta Agro
+            </option>
+          </select>
+        </div>
+
+        <div className="mb-3">
           <label className="form-label">Localidad</label>
           <input
             type="text"
@@ -476,6 +580,17 @@ const EditTractor = () => {
             placeholder="Localidad"
             name="localidad"
             value={formData.localidad}
+            onChange={handleChange}
+          />
+        </div>
+
+        <div className="mb-3">
+          <label className="form-label">Descripción</label>
+          <textarea
+            className="form-control"
+            placeholder="Descripción"
+            name="text"
+            value={formData.text}
             onChange={handleChange}
           />
         </div>
@@ -510,16 +625,6 @@ const EditTractor = () => {
                   precioIVA: { ...prev.precioIVA, valor: e.target.value },
                 }))
               }
-            />
-          </div>
-          <div className="mb-3">
-            <label className="form-label">Descripción</label>
-            <textarea
-              className="form-control"
-              placeholder="Descripción"
-              name="text"
-              value={formData.text}
-              onChange={handleChange}
             />
           </div>
         </div>
@@ -895,7 +1000,7 @@ const EditTractor = () => {
         </button>
         {showAlert && (
           <div className="alert alert-info mt-2" role="alert">
-            ¡Tractor actualizado correctamente!
+            ¡Tolva actualizada correctamente!
           </div>
         )}
       </form>
@@ -903,4 +1008,4 @@ const EditTractor = () => {
   );
 };
 
-export default EditTractor;
+export default EditTolvas;

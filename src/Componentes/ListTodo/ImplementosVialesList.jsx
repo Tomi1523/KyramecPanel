@@ -1,5 +1,6 @@
 import React from 'react';
 import { useImplementos } from "../../Use/UseImplementos";
+import { Link } from 'react-router-dom';
 
 const ImplementosVialesList = () => {
   const { implementos, loading, error, handleDeleteImplementos } = useImplementos();
@@ -47,9 +48,9 @@ const ImplementosVialesList = () => {
                 </ul>
                 <a href={implemento.pdfUrl} className="btn btn-primary mt-3" target="_blank" rel="noopener noreferrer">Ver PDF</a>
               </div>
-              <div>
+            <div className='gap-2 d-flex justify-content-center'>
                 <button
-                  className="btn btn-danger mt-2"
+                  className="btn btn-danger"
                   onClick={() => {
                     const confirmar = window.confirm("¿Estás seguro que deseas eliminar este producto?");
                     if (confirmar) {
@@ -59,6 +60,9 @@ const ImplementosVialesList = () => {
                 >
                   Eliminar
                 </button>
+                <Link to={`/opciones/implemento-vial/${implemento.id}`} className="btn btn-warning">
+                                  Editar
+                                </Link>
               </div>
             </div>
           </div>

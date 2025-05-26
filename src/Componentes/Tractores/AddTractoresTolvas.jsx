@@ -185,8 +185,7 @@ const AddTractoresTolvas = ({ subcategoria, categoria }) => {
   return (
     <div className="container py-4">
       <h2 className="mb-4">Agregar Tolvas</h2>
-      <p>{categoria}</p>
-      <p>{subcategoria}</p>
+      
       <form onSubmit={handleSubmit} className="mb-5">
         <div className="mb-3 d-flex">
           <label className="form-label mb-0">Finalidad</label>
